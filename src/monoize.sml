@@ -2647,6 +2647,7 @@ fun monoExp (env, st, fm) (all as (e, loc)) =
             end
 
           | L.EFfi ("Basis", "sql_current_timestamp") => (str "CURRENT_TIMESTAMP", fm)
+          | L.EFfi ("Basis", "sql_gen_random_uuid") => (str "gen_random_uuid()", fm)
 
           | L.ECApp (
             (L.ECApp (

@@ -629,6 +629,7 @@ val sql_nfunc : tables ::: {{Type}} -> agg ::: {{Type}} -> exps ::: {Type}
                 -> t ::: Type
                 -> sql_nfunc t -> sql_exp tables agg exps t
 val sql_current_timestamp : sql_nfunc time
+val sql_gen_random_uuid : sql_nfunc string
 
 con sql_ufunc :: Type -> Type -> Type
 val sql_ufunc : tables ::: {{Type}} -> agg ::: {{Type}} -> exps ::: {Type}
