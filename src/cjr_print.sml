@@ -3774,6 +3774,7 @@ fun declaresAsForeignKey xs s =
 fun p_sql env (ds, _) =
     let
         val usesSimilar = ref false
+        val usesPgcrypto = ref false
 
         val (ds, _) = ListUtil.foldlMapPartial
                           (fn (d, idxs) =>
@@ -3931,8 +3932,9 @@ fun p_sql env (ds, _) =
                  string ");",
                  newline,
                  newline]
-              | DDatabase {usesSimilar = s, ...} =>
-                (usesSimilar := s;
+              | DDatabase {usesSimilar = s1, usesPgcrypto = s2, ...} =>
+                (usesSimilar := s1;
+                 usesPgcrypto := s2;
                  [])
               | _ =>  []
 
@@ -3949,6 +3951,13 @@ fun p_sql env (ds, _) =
               @ (if !usesSimilar then
                      case #supportsSimilar (Settings.currentDbms ()) of
                          NONE => (ErrorMsg.error "Using SIMILAR with database that doesn't support it";
+                                  [])
+                       | SOME r => [string (#InitializeDb r), newline, newline]
+                 else
+                     [])
+              @ (if !usesPgcrypto then
+                     case #supportsPgcrypto (Settings.currentDbms ()) of
+                         NONE => (ErrorMsg.error "Using pgcrypto with database that doesn't support it";
                                   [])
                        | SOME r => [string (#InitializeDb r), newline, newline]
                  else

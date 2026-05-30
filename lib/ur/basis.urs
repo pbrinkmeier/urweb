@@ -660,6 +660,14 @@ val sql_subquery : tables ::: {{Type}} -> agg ::: {{Type}} -> exps ::: {Type} ->
                    -> sql_query tables agg [] [nm = t]
                    -> sql_exp tables agg exps nt
 
+(** pgcrypto stuff *)
+
+class cryptable
+val cryptable_string : cryptable string
+
+val sql_gen_salt : sql_ufunc string string
+val sql_crypt : t ::: Type -> cryptable t -> sql_bfunc t string string
+
 (** Window function expressions *)
 
 con sql_partition :: {{Type}} -> {{Type}} -> {Type} -> Type

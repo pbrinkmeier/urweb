@@ -658,7 +658,8 @@ type dbms = {
      requiresTimestampDefaults : bool,
      supportsIsDistinctFrom : bool,
      supportsSHA512 : {InitializeDb : string, GenerateHash : string -> string} option,
-     supportsSimilar : {InitializeDb : string} option
+     supportsSimilar : {InitializeDb : string} option,
+     supportsPgcrypto : {InitializeDb : string} option
 }
 
 val dbmses = ref ([] : dbms list)
@@ -694,7 +695,8 @@ val curDb = ref ({name = "",
                   requiresTimestampDefaults = false,
                   supportsIsDistinctFrom = false,
                   supportsSHA512 = NONE,
-                  supportsSimilar = NONE} : dbms)
+                  supportsSimilar = NONE,
+                  supportsPgcrypto = NONE} : dbms)
 
 fun addDbms v = dbmses := v :: !dbmses
 fun setDbms s =

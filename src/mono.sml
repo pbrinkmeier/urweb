@@ -145,7 +145,7 @@ datatype decl' =
        | DSequence of string
        | DView of string * (string * typ) list * exp
        | DIndex of string * (string * index_mode) list
-       | DDatabase of {name : string, expunge : int, initialize : int, usesSimilar : bool}
+       | DDatabase of {name : string, expunge : int, initialize : int, usesSimilar : bool, usesPgcrypto : bool}
 
        | DJavaScript of string
 

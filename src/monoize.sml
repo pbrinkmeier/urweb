@@ -51,12 +51,13 @@ structure RM = BinaryMapFn(struct
                            end)
 
 val uses_similar = ref false
+val uses_pgcrypto = ref false
 
 local
     val url_prefixes = ref []
 in
 
-fun reset () = (url_prefixes := []; uses_similar := false)
+fun reset () = (url_prefixes := []; uses_similar := false; uses_pgcrypto := false)
 
 fun addPrefix prefix =
     let
@@ -2678,6 +2679,16 @@ fun monoExp (env, st, fm) (all as (e, loc)) =
             (str "lower", fm)
           | L.EFfi ("Basis", "sql_upper") =>
             (str "upper", fm)
+          | L.EFfi ("Basis", "sql_gen_salt") =>
+            (uses_pgcrypto := true;
+            (str "gen_salt", fm))
+          | (L.ECApp (
+                  (L.EFfi ("Basis", "sql_crypt"), _),
+                  _)) =>
+            (uses_pgcrypto := true;
+             ((L'.EAbs ("_", (L'.TRecord [], loc), (L'.TFfi ("Basis", "string"), loc),
+                        str "crypt"), loc),
+              fm))
           | L.ECApp ((L.EFfi ("Basis", "sql_known"), _), _) =>
             ((L'.EFfi ("Basis", "sql_known"), loc), fm)
 
@@ -4641,7 +4652,8 @@ fun monoize env file =
                                                 (env, Fm.enter fm, (L'.DDatabase {name = s,
                                                                                   expunge = nExp,
                                                                                   initialize = nIni,
-                                                                                  usesSimilar = false}, loc)
+                                                                                  usesSimilar = false,
+                                                                                  usesPgcrypto = false}, loc)
                                                                    :: (dExp, loc)
                                                                    :: (dIni, loc)
                                                                    :: ds)
@@ -4669,7 +4681,8 @@ fun monoize env file =
                          (L'.DDatabase {name = #name r,
                                         expunge = #expunge r,
                                         initialize = #initialize r,
-                                        usesSimilar = !uses_similar}, loc)
+                                        usesSimilar = !uses_similar,
+                                        usesPgcrypto = !uses_pgcrypto}, loc)
                      | x => x) ds
         val monoFile = (rev ds, [])
     in

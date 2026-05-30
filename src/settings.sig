@@ -228,7 +228,8 @@ signature SETTINGS = sig
          (* If supported, give the SQL code to
           * enable the feature in a particular
           * database and to compute a hash of a value. *)
-         supportsSimilar : {InitializeDb : string} option
+         supportsSimilar : {InitializeDb : string} option,
+         supportsPgcrypto : {InitializeDb : string} option
     }
 
     val addDbms : dbms -> unit
